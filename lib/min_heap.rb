@@ -9,15 +9,16 @@ end
 
 
 class MinHeap
-  def initialize
-    @store = []
+  def initialize(store = [])
+    @store = store
   end
+
   # This method adds a HeapNode instance to the heap
   # Time Complexity: O(log(n)) using heap up method
   # Space Complexity: O(1)
   def add(key, value = key)
     new_node = HeapNode.new(key, value)
-
+    
     if @store.empty? 
       @store << new_node
       return 
@@ -31,13 +32,13 @@ class MinHeap
   #   maintaining the heap structure
   # Time Complexity: O(log(n)) - using heap down method
   # Space Complexity: O(1)
-  def remove()
+  def remove
     if @store.empty?
       return nil
     end
     removed = @store[0]
     swap(0, @store.length - 1)
-    @store = @store[1..-1]
+    @store = @store[0...-1]
 
     heap_down(0)
     return removed.value
@@ -77,10 +78,7 @@ class MinHeap
       return 
     end 
 
-    if @store[parent_index].key > @store[index].key
-      swap(parent_index, index)
-    end 
-
+    swap(parent_index, index)
     heap_up(parent_index)
   end
 
@@ -88,17 +86,24 @@ class MinHeap
   #  moves it down the heap if it's bigger
   #  than it's parent node.
   def heap_down(index)
-    down_index = (index + 1) * 2
+    left = index * 2 + 1
+    right = index * 2 + 2
+    min = left
+
+    if left >= @store.length    
+      return
+    end
     
-    if down_index > @store.length || @store[down_index].key > @store[index].key
+    if right < @store.length && @store[left].key > @store[right].key
+      min = right
+    end
+
+    if @store[index].key < @store[min].key
       return 
     end 
 
-    if @store[down_index].key < @store[index].key
-      swap(down_index, index)
-    end 
-
-    heap_down(down_index)
+    swap(index, min)
+    heap_down(min)
   end
 
   # If you want a swap method... you're welcome
